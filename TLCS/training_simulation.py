@@ -124,7 +124,7 @@ class Simulation:
         """
         Retrieve the waiting time of every car in the incoming roads
         """
-        incoming_roads = ["E2TL", "N2TL", "W2TL", "S2TL"]
+        incoming_roads = ["E2TL", "N2TL", "W2TL", "S2TL","N2TLT", "S2TLT"]
         car_list = traci.vehicle.getIDList()
         for car_id in car_list:
             wait_time = traci.vehicle.getAccumulatedWaitingTime(car_id)
@@ -133,7 +133,7 @@ class Simulation:
                 self._waiting_times[car_id] = wait_time
             else:
                 if car_id in self._waiting_times: # a car that was tracked has cleared the intersection
-                    del self._waiting_times[car_id] 
+                    del self._waiting_times[car_id]
         total_waiting_time = sum(self._waiting_times.values())
         return total_waiting_time
 
@@ -175,10 +175,12 @@ class Simulation:
         Retrieve the number of cars with speed = 0 in every incoming lane
         """
         halt_N = traci.edge.getLastStepHaltingNumber("N2TL")
+        halt_NT = traci.edge.getLastStepHaltingNumber("N2TLT")
         halt_S = traci.edge.getLastStepHaltingNumber("S2TL")
+        halt_ST = traci.edge.getLastStepHaltingNumber("S2TLT")
         halt_E = traci.edge.getLastStepHaltingNumber("E2TL")
         halt_W = traci.edge.getLastStepHaltingNumber("W2TL")
-        queue_length = halt_N + halt_S + halt_E + halt_W
+        queue_length = halt_N + halt_NT + halt_S + halt_ST + halt_E + halt_W
         return queue_length
 
 
@@ -192,7 +194,7 @@ class Simulation:
         for car_id in car_list:
             lane_pos = traci.vehicle.getLanePosition(car_id)
             lane_id = traci.vehicle.getLaneID(car_id)
-            lane_pos = 750 - lane_pos  # inversion of lane pos, so if the car is close to the traffic light -> lane_pos = 0 --- 750 = max len of a road
+            lane_pos = 200 - lane_pos  # inversion of lane pos, so if the car is close to the traffic light -> lane_pos = 0 --- 750 = max len of a road
 
             # distance in meters from the traffic light -> mapping into cells
             if lane_pos < 7:
@@ -216,7 +218,7 @@ class Simulation:
             elif lane_pos <= 750:
                 lane_cell = 9
 
-            # finding the lane where the car is located 
+            # finding the lane where the car is located
             # x2TL_3 are the "turn left only" lanes
             if lane_id == "W2TL_0" or lane_id == "W2TL_1" or lane_id == "W2TL_2":
                 lane_group = 0
@@ -224,7 +226,7 @@ class Simulation:
                 lane_group = 1
             elif lane_id == "N2TL_0" or lane_id == "N2TL_1" or lane_id == "N2TL_2":
                 lane_group = 2
-            elif lane_id == "N2TL_3":
+            elif lane_id == "N2TLT_0" or lane_id == "N2TLT_1":
                 lane_group = 3
             elif lane_id == "E2TL_0" or lane_id == "E2TL_1" or lane_id == "E2TL_2":
                 lane_group = 4
@@ -232,7 +234,7 @@ class Simulation:
                 lane_group = 5
             elif lane_id == "S2TL_0" or lane_id == "S2TL_1" or lane_id == "S2TL_2":
                 lane_group = 6
-            elif lane_id == "S2TL_3":
+            elif lane_id == "S2TLT_0" or lane_id == "S2TLT_1":
                 lane_group = 7
             else:
                 lane_group = -1
@@ -302,4 +304,3 @@ class Simulation:
     @property
     def avg_queue_length_store(self):
         return self._avg_queue_length_store
-
