@@ -100,7 +100,7 @@ def set_train_path(models_path_name):
     models_path = os.path.join(os.getcwd(), models_path_name, '')
     os.makedirs(os.path.dirname(models_path), exist_ok=True)
 
-    dir_content = os.listdir(models_path)
+    dir_content = [f for f in os.listdir(models_path) if not f.startswith('.')] 
     if dir_content:
         previous_versions = [int(name.split("_")[1]) for name in dir_content]
         new_version = str(max(previous_versions) + 1)

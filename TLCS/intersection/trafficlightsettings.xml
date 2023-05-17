@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2023-05-13 19:28:33 by Eclipse SUMO netedit Version v1_17_0+0172-8b68beeaf46
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
+
+    <input>
+        <sumo-net-file value="/Users/eman.shuaib/Deep-QLearning-Agent-for-Traffic-Signal-Control/TLCS/intersection/environment.net.xml"/>
+    </input>
+
+    <processing>
+        <geometry.min-radius.fix.railways value="false"/>
+        <geometry.max-grade.fix value="false"/>
+        <offset.disable-normalization value="true"/>
+        <lefthand value="0"/>
+    </processing>
+
+    <junctions>
+        <no-turnarounds value="true"/>
+        <junctions.corner-detail value="5"/>
+        <junctions.limit-turn-speed value="5.50"/>
+        <rectangular-lane-cut value="0"/>
+    </junctions>
+
+    <pedestrian>
+        <walkingareas value="0"/>
+    </pedestrian>
+
+</configuration>
+-->
+
+<additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
+    <tlLogic id="TL" type="static" programID="0" offset="0">
+        <phase duration="100" state="GGGGrrrrrrGGGGrrrrrr"/>
+        <phase duration="100" state="yyyyrrrrrryyyyrrrrrr"/>
+        <phase duration="100" state="rrrrGrrrrrrrrrGrrrrr"/>
+        <phase duration="100" state="rrrryrrrrrrrrryrrrrr"/>
+        <phase duration="100" state="rrrrrGGGGrrrrrrGGGGr"/>
+        <phase duration="100" state="rrrrryyyyrrrrrryyyyr"/>
+        <phase duration="100" state="rrrrrrrrrGrrrrrrrrrG"/>
+        <phase duration="100" state="rrrrrrrrryrrrrrrrrry"/>
+    </tlLogic>
+</additional>

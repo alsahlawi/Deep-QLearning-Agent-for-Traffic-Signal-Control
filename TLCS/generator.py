@@ -43,17 +43,12 @@ class TrafficGenerator:
             print("""<routes>
 
             <vType accel="1.0" decel="4.5" id="standard_car" length="5.0" minGap="2.5" maxSpeed="25" sigma="0.5" />
-            <vType accel="1.0" decel="4.5" id="bus" length="5.0" minGap="2.5" maxSpeed="25" sigma="0.5" guiShape="bus/coach" />
-            <vType vClass="truck" accel="1.0" decel="4.5" id="truck" length="5.0" minGap="2.5" maxSpeed="25" sigma="0.5" guiShape="truck" />
+            <vType accel="1.0" decel="4.5" id="bus" length="10.0" width="3" minGap="2.5" maxSpeed="25" sigma="0.5" color="red" guiShape="bus" />
+            <vType vClass="truck" accel="1.0" decel="4.5" id="truck" length="15.0" minGap="2.5" maxSpeed="25" sigma="0.5" color="grey" guiShape="truck" />
             <vType vClass="emergency" id="rescue" guiShape="emergency" >
               <param key="has.bluelight.device" value="true"/>
             </vType>
-         <!--            <type id="truck" priority="3" numLanes="3" speed="38.89">-->
-<!--               <restriction vClass="truck" speed="27.89"/>-->
-<!--            </type>-->
-<!--            <vType id="rescue" vClass="emergency" speedFactor="1.5">-->
-<!--               <param key="has.bluelight.device" value="true"/>-->
-<!--            </vType>-->
+
 
             <route id="W_N" edges="W2TL TL2N"/>
             <route id="W_E" edges="W2TL TL2E"/>
@@ -79,11 +74,11 @@ class TrafficGenerator:
                 else:  # car that turn -25% of the time the car turns
                     route_turn = np.random.randint(1, 4)  # choose random source source & destination
                     if route_turn == 1:
-                        print('    <vehicle id="W_N_%i" type="standard_car" route="W_N" depart="%s" departLane="random" departSpeed="5" />' % (car_counter, step), file=routes)
+                        print('    <vehicle id="W_N_%i" type="standard_car" route="W_N" depart="%s" departLane="%i" departSpeed="5" />' % (car_counter, step,random.randint(2, 3)), file=routes)
                     elif route_turn == 2:
                         print('    <vehicle id="N_E_%i" type="standard_car" route="N_E" depart="%s" departLane="random" departSpeed="10" />' % (car_counter, step), file=routes)
                     elif route_turn == 3:
-                        print('    <vehicle id="E_S_%i" type="standard_car" route="E_S" depart="%s" departLane="random" departSpeed="10" />' % (car_counter, step), file=routes)
+                        print('    <vehicle id="E_S_%i" type="standard_car" route="E_S" depart="%s" departLane="2" departSpeed="5" />' % (car_counter, step), file=routes)
                     elif route_turn == 4:
                         print('    <vehicle id="S_W_%i" type="standard_car" route="S_W" depart="%s" departLane="random" departSpeed="10" />' % (car_counter, step), file=routes)
 
@@ -94,6 +89,7 @@ class TrafficGenerator:
         # simple function to control traffic generation
         car_types = []
         car_probabilities = []
+        additional_params = ""
         if self._standard_cars:
             car_types.append('standard_car')
             car_probabilities.append(self._standard_cars_p)
@@ -107,7 +103,7 @@ class TrafficGenerator:
             car_types.append('rescue')
             car_probabilities.append(self._rescue_cars_p)
 
-        if len(car_types) < 1 or len(car_probabilities):
+        if len(car_types) < 1 or len(car_probabilities) < 1:
             car_types = ['standard_car', 'bus', 'truck', 'rescue']
             car_probabilities = [0.7, 0.15, 0.10, 0.05]
 
