@@ -25,6 +25,7 @@ def import_train_configuration(config_file):
     config['rescue_cars_p'] = content['simulation'].getfloat('rescue_cars_p')
     config['buses_p'] = content['simulation'].getfloat('buses_p')
     config['trucks_p'] = content['simulation'].getfloat('trucks_p')
+    config['tlc_traditional_mode'] = content['simulation'].getboolean('tlc_traditional_mode')
     config['num_layers'] = content['model'].getint('num_layers')
     config['width_layers'] = content['model'].getint('width_layers')
     config['batch_size'] = content['model'].getint('batch_size')

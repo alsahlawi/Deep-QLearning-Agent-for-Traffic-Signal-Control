@@ -16,7 +16,7 @@ PHASE_EWL_YELLOW = 7
 
 
 class Simulation:
-    def __init__(self, Model, Memory, TrafficGen, sumo_cmd, gamma, max_steps, green_duration, yellow_duration, num_states, num_actions, training_epochs):
+    def __init__(self, Model, Memory, TrafficGen, sumo_cmd, gamma, max_steps, green_duration, yellow_duration, num_states, num_actions, training_epochs,tlc_traditional_mode):
         self._Model = Model
         self._Memory = Memory
         self._TrafficGen = TrafficGen
@@ -32,7 +32,17 @@ class Simulation:
         self._cumulative_wait_store = []
         self._avg_queue_length_store = []
         self._training_epochs = training_epochs
+        self._tlc_traditional_switch = 1,
+        self._tlc_traditional_mode = tlc_traditional_mode
 
+    def _get_tlc_turn(self):
+        # global counter
+        
+        value = self._tlc_traditional_switch
+        self._tlc_traditional_switch = self._tlc_traditional_switch + 1
+        if self._tlc_traditional_switch > 4:
+            self._tlc_traditional_switch = 1
+        return value - 1
 
     def run(self, episode, epsilon):
         """
@@ -44,7 +54,7 @@ class Simulation:
         self._TrafficGen.generate_routefile(seed=episode)
         traci.start(self._sumo_cmd)
         print("Simulating...")
-
+        
         # inits
         self._step = 0
         self._waiting_times = {}
@@ -54,7 +64,7 @@ class Simulation:
         old_total_wait = 0
         old_state = -1
         old_action = -1
-
+        self._tlc_traditional_switch = 1
         while self._step < self._max_steps:
 
             # get current state of the intersection
@@ -69,8 +79,11 @@ class Simulation:
             if self._step != 0:
                 self._Memory.add_sample((old_state, old_action, reward, current_state))
 
-            # choose the light phase to activate, based on the current state of the intersection
-            action = self._choose_action(current_state, epsilon)
+            # choose the light phase to activate, based on the current state of the intersection and tlc mode
+            if self._tlc_traditional_switch:
+                action = self._get_tlc_turn()
+            else:
+                action = self._choose_action(current_state, epsilon)
 
             # if the chosen phase is different from the last phase, activate the yellow phase
             if self._step != 0 and old_action != action:
@@ -94,12 +107,15 @@ class Simulation:
         print("Total reward:", self._sum_neg_reward, "- Epsilon:", round(epsilon, 2))
         traci.close()
         simulation_time = round(timeit.default_timer() - start_time, 1)
-
-        print("Training...")
-        start_time = timeit.default_timer()
-        for _ in range(self._training_epochs):
-            self._replay()
-        training_time = round(timeit.default_timer() - start_time, 1)
+        
+        if self._tlc_traditional_switch:
+            training_time = 0
+        else:
+            print("Training...")
+            start_time = timeit.default_timer()
+            for _ in range(self._training_epochs):
+                self._replay()
+            training_time = round(timeit.default_timer() - start_time, 1)
 
         return simulation_time, training_time
 

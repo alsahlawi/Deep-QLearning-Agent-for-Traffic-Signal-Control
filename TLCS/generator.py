@@ -16,7 +16,9 @@ class TrafficGenerator:
         self._rescue_cars_p = rescue_cars_p
         self._buses_p = buses_p
         self._trucks_p = trucks_p
+        
 
+    
     def generate_routefile(self, seed):
         """
         Generation of the route of every car for one episode
@@ -109,3 +111,5 @@ class TrafficGenerator:
 
         selected_type = random.choices(car_types, car_probabilities)[0]
         return selected_type
+    
+    
